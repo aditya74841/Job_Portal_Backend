@@ -61,16 +61,16 @@ app.use(express.json({ limit: "16kb" }));
 
 const PORT = process.env.PORT || 3000;
 
-app.use("/", (req, res) => {
-  res.send("Hello from Job POrtal");
-});
+
 
 // api's
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
-
+app.use("/", (req, res) => {
+  res.status(200).send("Hello from Job POrtal");
+});
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server running at port ${PORT}`);
