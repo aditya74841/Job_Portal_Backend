@@ -17,7 +17,7 @@ const app = express();
 
 // middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true,limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public")); // configure static file to save images locally
 
 app.use(cookieParser());
@@ -26,19 +26,15 @@ const corsOptions = {
   credentials: true,
 };
 
-
 app.use(
-    session({
-      secret: process.env.EXPRESS_SESSION_SECRET,
-      resave: true,
-      saveUninitialized: true,
-    })
-  ); // session secret
-  app.use(passport.initialize());
-  app.use(passport.session()); // persistent login sessions
-  
-
-
+  session({
+    secret: process.env.EXPRESS_SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+  })
+); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
 
 app.use(cors(corsOptions));
 
@@ -64,6 +60,10 @@ app.use(limiter);
 app.use(express.json({ limit: "16kb" }));
 
 const PORT = process.env.PORT || 3000;
+
+app.use("/", (req, res) => {
+  res.send("Hello from Job POrtal");
+});
 
 // api's
 app.use("/api/v1/user", userRoute);
