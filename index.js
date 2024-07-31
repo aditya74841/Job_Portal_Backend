@@ -22,7 +22,7 @@ app.use(express.static("public")); // configure static file to save images local
 
 app.use(cookieParser());
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://jarurat.netlify.app"],
+  origin: ["http://localhost:5173", "https://naukriii.netlify.app"],
   credentials: true,
 };
 
