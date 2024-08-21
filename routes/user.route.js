@@ -1,6 +1,7 @@
 import express from "express";
 import {
   changeCurrentPassword,
+  deleteUser,
   forgotPasswordRequest,
   login,
   logout,
@@ -21,5 +22,6 @@ router
 router.route("/forgot-password").post(isAuthenticated, forgotPasswordRequest);
 router.route("/change-password").post(isAuthenticated, changeCurrentPassword);
 router.route("/getProfile").post(isAuthenticated, changeCurrentPassword);
+router.route("/delete/:id").post(isAuthenticated, deleteUser);
 
 export default router;

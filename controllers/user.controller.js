@@ -263,3 +263,24 @@ export const getCurrentUser = async (req, res) => {
     console.log(error);
   }
 };
+
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found .",
+        success: false,
+      });
+    }
+    await user.deleteOne();
+    return res
+      .status(200)
+      .json({ message: "User deleted successfully.", success: true });
+  } catch (error) {
+    return res
+      .status(404)
+      .json({ message: error.response.data.message, success: false });
+  }
+};
