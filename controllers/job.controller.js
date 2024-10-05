@@ -64,7 +64,7 @@ export const getAllJobs = async (req, res) => {
       ],
     };
 
-    console.log(query);
+    // console.log(query);
 
     const jobs = await Job.find(query)
       .populate({
@@ -105,6 +105,7 @@ export const getJobById = async (req, res) => {
 };
 export const deleteJobs = async (req, res) => {
   try {
+    // console.log("Checking ")
     const jobId = req.params.id;
     const job = await Job.findById(jobId);
     if (!job) {
@@ -143,5 +144,49 @@ export const getAdminJobs = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const updateJob = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      requirements,
+      salary,
+      location,
+      jobType,
+      experience,
+      position,
+    } = req.body;
+
+    const userId = req.id;
+    const jobId = req.params.id;
+
+    const postData = {
+      title,
+      description,
+      requirements: requirements.split(","),
+      salary: Number(salary),
+      location,
+      jobType,
+      experienceLevel: experience,
+      position,
+      created_by: userId,
+    };
+    const job = await Job.findByIdAndUpdate(jobId, postData, {
+      new: true,
+    });
+
+    return res.status(201).json({
+      message: "Job Updated successfully.",
+      job,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+      success: false,
+    });
   }
 };

@@ -72,6 +72,7 @@ export const getCompanyById = async (req, res) => {
 
 export const deleteCompany = async (req, res) => {
   try {
+    // console.log("checking")
     const companyId = req.params.id;
     const company = await Company.findById(companyId);
     if (!company) {
@@ -83,7 +84,7 @@ export const deleteCompany = async (req, res) => {
 
     await company.deleteOne();
     return res.status(200).json({
-      message: "Company deleted successfully",
+      message: "Company deleted successfullyy",
       success: true,
     });
   } catch (error) {
@@ -94,30 +95,62 @@ export const deleteCompany = async (req, res) => {
 export const updateCompany = async (req, res) => {
   try {
     const { name, description, website, location } = req.body;
+    const companyId = req.params.id;
 
-    const file = req.file;
-    // idhar cloudinary ayega
-    const fileUri = getDataUri(file);
-    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-    const logo = cloudResponse.secure_url;
-
-    const updateData = { name, description, website, location, logo };
-
-    const company = await Company.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
-
+    // Find the company by ID
+    // const company = await Company.findById(companyId);
+    const company = await Company.find({ _id: companyId });
+    // console.log(company);
     if (!company) {
       return res.status(404).json({
         message: "Company not found.",
         success: false,
       });
     }
+
+    const file = req.file;
+    let logo = company.logo;
+
+    // Upload new logo to Cloudinary if file is provided
+    if (file) {
+      const fileUri = getDataUri(file);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      logo = cloudResponse.secure_url;
+    }
+
+    // Prepare update data
+    const updateData = {
+      name,
+      description,
+      website,
+      location,
+      logo,
+    };
+
+    // Update company details
+    const updatedCompany = await Company.findByIdAndUpdate(
+      companyId,
+      updateData,
+      {
+        new: true,
+      }
+    );
+
+    // Return updated company data
     return res.status(200).json({
       message: "Company information updated.",
       success: true,
+      company: updatedCompany,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error updating company:", error);
+
+    // Handle error based on the error type
+    const errorMessage =
+      error.response?.data?.message || error.message || "An error occurred.";
+    return res.status(500).json({
+      message: errorMessage,
+      success: false,
+    });
   }
 };
